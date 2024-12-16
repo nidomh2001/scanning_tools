@@ -79,23 +79,23 @@ class StageController:
 if __name__ == '__main__':
     stage_controller = StageController()
 
-    # print("0位置に強制移動")
-    # stage_controller.forceMoveZeroPosition()
+    print("0位置に強制移動")
+    stage_controller.forceMoveZeroPosition()
     
     # 1000パルス分移動（ここを利用してAXIS1_PULSE_PER_UM, AXIS2_PULSE_PER_UMを求める）
-    # print("1000パルス分移動")
-    # stage_controller.stage.write("M:1+P10000")
-    # stage_controller.stage.write("G:")
-    # stage_controller.waitReady()
-    # time.sleep(5)   # 5秒待つ
+    print("1000パルス分移動")
+    stage_controller.stage.write("M:4+P1000")
+    stage_controller.stage.write("G:")
+    stage_controller.waitReady()
+    time.sleep(5)   # 5秒待つ
     
-    # # 初期位置に戻す
-    # print("初期位置に戻す")
-    # stage_controller.moveBasePosition()
-    # stage_controller.waitReady()
+    # 初期位置に戻す
+    print("初期位置に戻す")
+    stage_controller.moveBasePosition()
+    stage_controller.waitReady()
     
-    # # 試しに10000um移動し、1秒待って初期位置に戻す
-    stage_controller.moveAbs(1, 0)
-    time.sleep(5)
-    stage_controller.moveAbs(1, 10000)
+    # 試しに10000um移動し、1秒待って初期位置に戻す
+    stage_controller.moveAbs(4, 10000)
+    time.sleep(1)
+    stage_controller.moveBasePosition()
     

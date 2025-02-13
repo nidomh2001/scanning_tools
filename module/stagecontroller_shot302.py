@@ -7,8 +7,8 @@ READY_CHECK_PERIOD_S = 1/1000
 # 1umステージを動かすのに何パルス必要か
 #   stage.write(M:1+P1000)を実行したときに
 #   1000 /「移動した距離(um)」を求めて代入すればよい
-AXIS1_PULSE_PER_UM = 5000 / 1000
-AXIS2_PULSE_PER_UM = 5000 / 1000
+AXIS1_UM_PER_PULSE = 1000 / 1000
+AXIS2_UM_PER_PULSE = 1000 / 1000
 
 class StageController:
     
@@ -57,9 +57,9 @@ class StageController:
     
     def moveAbs(self, axis, position_um, direction='+', wait_time_s=0.0):
         if axis == 1:
-            num_pulse = int(position_um * AXIS1_PULSE_PER_UM)
+            num_pulse = int(position_um / AXIS1_UM_PER_PULSE)
         elif axis == 2:
-            num_pulse = int(position_um * AXIS2_PULSE_PER_UM)
+            num_pulse = int(position_um / AXIS2_UM_PER_PULSE)
         else:
             raise ValueError(f"無効な軸番号が指定されました: {axis}")
         
@@ -85,26 +85,20 @@ class StageController:
         
 
 if __name__ == '__main__':
+    # ステージコントローラの初期化
     stage_controller = StageController()
     
-    stage_controller.moveAbs(1, 1000, '-')
-    time.sleep(1)
+    # 原点に戻る
     stage_controller.moveAbs(1, 0)
+    time.sleep(1)
     
-    # # 1000パルス分移動（ここを利用してAXIS1_PULSE_PER_UM, AXIS2_PULSE_PER_UMを求める）
+    # 10000 um 移動
+    stage_controller.moveAbs(1, 10000)
+    
+    # 1000パルス分移動（ここを利用してAXIS_UM_PER_PULSEを求める）
     # print("1000パルス分移動")
-    # stage_controller.stage.write("M:1-P5000")
+    # stage_controller.stage.write("M:1+P1000")
     # stage_controller.stage.write("G:")
     # stage_controller.waitReady()
-    # time.sleep(5)   # 5秒待つ
-    
-    # # 初期位置に戻す
-    # print("初期位置に戻す")
-    # stage_controller.moveBasePosition()
-    # stage_controller.waitReady()
-    
-    # # 試しに10000um移動し、1秒待って初期位置に戻す
-    # stage_controller.moveAbs(2, 10000)
-    # time.sleep(1)
-    # stage_controller.moveBasePosition()
+    # time.sleep(5)   # 5秒待つ    
     

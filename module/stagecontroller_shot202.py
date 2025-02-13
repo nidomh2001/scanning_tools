@@ -4,14 +4,11 @@ import time
 
 READY_CHECK_PERIOD_S = 1/1000
 
-# 1パルスで何um動くか
-AXIS1_UM_PER_PULSE = 1000 / 1000
-AXIS2_UM_PER_PULSE = 1000 / 1000
-AXIS3_UM_PER_PULSE = 1000 / 1000
-AXIS4_UM_PER_PULSE = 1000 / 1000
-
-
-#P1000で2mm 2000um
+# 1umステージを動かすのに何パルス必要か
+#   stage.write(M:1+P1000)を実行したときに
+#   1000 /「移動した距離(um)」を求めて代入すればよい
+AXIS1_PULSE_PER_UM = 5000 / 1000
+AXIS2_PULSE_PER_UM = 5000 / 1000
 
 class StageController:
     
@@ -26,6 +23,7 @@ class StageController:
             print("Connected GPIB devices:")
             for device in gpib_devices:
                 print(device)
+                
             # GPIB0の番号は使用するステージコントローラに合わせて変更
             self.stage = rm.open_resource('GPIB0::8::INSTR')
             # ============================
@@ -40,31 +38,33 @@ class StageController:
             print(f"予期せぬエラーが発生しました: {e}")
         pass
     
+    def list_gpib_devices():
+        rm = pyvisa.ResourceManager()
+        resources = rm.list_resources()
+        gpib_devices = [resource for resource in resources if 'GPIB' in resource]
+        print("Connected GPIB devices:")
+        for device in gpib_devices:
+            print(device)
+    
     def setSpeed(self):
         # 使用するステージに応じて数値を変更。どう変更するかは試して探せ
-        self.stage.query("D:WS2500F50000R100S2500F50000R100S2500F50000R100S2500F50000R100")
+        self.stage.query("D:WS2000F3000R100S2000F3000R100")
         self.waitReady()
     
     def moveBasePosition(self):
         self.moveAbs(1, 0)
         self.moveAbs(2, 0)
-        self.moveAbs(3, 0)
-        self.moveAbs(4, 0)
     
     def moveAbs(self, axis, position_um, direction='+', wait_time_s=0.0):
         if axis == 1:
-            num_pulse = int(position_um / AXIS1_UM_PER_PULSE)
+            num_pulse = int(position_um * AXIS1_PULSE_PER_UM)
         elif axis == 2:
-            num_pulse = int(position_um * AXIS2_UM_PER_PULSE)
-        elif axis == 3:
-            num_pulse = int(position_um * AXIS3_UM_PER_PULSE)
-        elif axis == 4:
-            num_pulse = int(position_um * AXIS4_UM_PER_PULSE)
+            num_pulse = int(position_um * AXIS2_PULSE_PER_UM)
         else:
             raise ValueError(f"無効な軸番号が指定されました: {axis}")
         
         wdata = "A:" + str(axis) + direction + "P" + str(num_pulse)
-        # print(wdata)
+        print(wdata)
         self.stage.write(wdata)
         self.waitReady() 
         self.stage.write("G:")
@@ -74,7 +74,7 @@ class StageController:
     
     def waitReady(self):
         while(1):
-            if(self.stage.query("!:") == 'R') : break
+            if(self.stage.query("!:") == 'R\r\n') : break
             time.sleep(READY_CHECK_PERIOD_S)
             
     def forceMoveZeroPosition(self):
@@ -85,19 +85,26 @@ class StageController:
         
 
 if __name__ == '__main__':
-    # ステージコントローラの初期化
     stage_controller = StageController()
     
-    # 原点に戻る
-    stage_controller.moveAbs(1, 0)
+    stage_controller.moveAbs(1, 1000, '-')
     time.sleep(1)
+    stage_controller.moveAbs(1, 0)
     
-    # 10000 um 移動
-    stage_controller.moveAbs(1, 10000)
-    
-    # 1000パルス分移動（ここを利用してAXIS_UM_PER_PULSEを求める）
+    # # 1000パルス分移動（ここを利用してAXIS1_PULSE_PER_UM, AXIS2_PULSE_PER_UMを求める）
     # print("1000パルス分移動")
-    # stage_controller.stage.write("M:4+P1000")
+    # stage_controller.stage.write("M:1-P5000")
     # stage_controller.stage.write("G:")
     # stage_controller.waitReady()
-    # time.sleep(5)   # 5秒待つ    
+    # time.sleep(5)   # 5秒待つ
+    
+    # # 初期位置に戻す
+    # print("初期位置に戻す")
+    # stage_controller.moveBasePosition()
+    # stage_controller.waitReady()
+    
+    # # 試しに10000um移動し、1秒待って初期位置に戻す
+    # stage_controller.moveAbs(2, 10000)
+    # time.sleep(1)
+    # stage_controller.moveBasePosition()
+    

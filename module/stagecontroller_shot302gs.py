@@ -46,9 +46,12 @@ class StageController:
         for device in gpib_devices:
             print(device)
     
-    def setSpeed(self):
+    def setSpeed(
+        self, 
+        ax1_min_speed=2000, ax1_max_speed=5000, ax1_acceleration=100,
+        ax2_min_speed=2000, ax2_max_speed=5000, ax2_acceleration=100):
         # 使用するステージに応じて数値を変更。どう変更するかは試して探せ
-        self.stage.query("D:WS2000F3000R100S2000F3000R100")
+        self.stage.query(f"D:WS{ax1_min_speed}F{ax1_max_speed}R{ax1_acceleration}S{ax2_min_speed}F{ax2_max_speed}R{ax2_acceleration}")
         self.waitReady()
     
     def moveBasePosition(self):

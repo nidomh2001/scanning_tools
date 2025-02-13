@@ -55,11 +55,11 @@ class StageController:
         if axis == 1:
             num_pulse = int(position_um / AXIS1_UM_PER_PULSE)
         elif axis == 2:
-            num_pulse = int(position_um * AXIS2_UM_PER_PULSE)
+            num_pulse = int(position_um / AXIS2_UM_PER_PULSE)
         elif axis == 3:
-            num_pulse = int(position_um * AXIS3_UM_PER_PULSE)
+            num_pulse = int(position_um / AXIS3_UM_PER_PULSE)
         elif axis == 4:
-            num_pulse = int(position_um * AXIS4_UM_PER_PULSE)
+            num_pulse = int(position_um / AXIS4_UM_PER_PULSE)
         else:
             raise ValueError(f"無効な軸番号が指定されました: {axis}")
         
@@ -97,7 +97,7 @@ if __name__ == '__main__':
     
     # 1000パルス分移動（ここを利用してAXIS_UM_PER_PULSEを求める）
     # print("1000パルス分移動")
-    # stage_controller.stage.write("M:4+P1000")
+    # stage_controller.stage.write("M:1+P1000")
     # stage_controller.stage.write("G:")
     # stage_controller.waitReady()
     # time.sleep(5)   # 5秒待つ    

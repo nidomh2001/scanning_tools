@@ -40,7 +40,7 @@ pip install -r requirements.txt
 
 shot302使用の場合
 ```
-streamlit run ./module/gui_stagecontroller_shot302.py
+streamlit run ./module/gui_stagecontroller_shot302gs.py
 ```
 
 shot304gs使用の場合

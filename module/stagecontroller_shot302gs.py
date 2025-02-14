@@ -85,14 +85,18 @@ class StageController:
         self.stage.write("G:")
         self.waitReady()
         self.stage.write("R:W")
-        
+    
+    # 機械原点復帰命令
+    def moveToHomePosition(self, axis):
+        self.stage.write(f"H:{axis}")  
+        self.waitReady()
 
 if __name__ == '__main__':
     # ステージコントローラの初期化
     stage_controller = StageController()
     
     # 原点に戻る
-    stage_controller.moveAbs(1, 0)
+    stage_controller.moveToHomePosition(1)
     time.sleep(1)
     
     # 10000 um 移動
@@ -103,5 +107,4 @@ if __name__ == '__main__':
     # stage_controller.stage.write("M:1+P1000")
     # stage_controller.stage.write("G:")
     # stage_controller.waitReady()
-    # time.sleep(5)   # 5秒待つ    
-    
+    # time.sleep(5)   # 5秒待つ

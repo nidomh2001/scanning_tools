@@ -6,7 +6,7 @@ READY_CHECK_PERIOD_S = 1/1000
 
 # ステージによって1umステージを動かすのに何パルス必要か変わるので、
 # stage.write(M:1+P1000)を実行したときに何um動くかを調べておく
-AXIS1_UM_PER_PULSE = 1000 / 1000
+AXIS1_UM_PER_PULSE = 5000 / 100000
 AXIS2_UM_PER_PULSE = 1000 / 1000
 
 class StageController:
@@ -29,10 +29,10 @@ class StageController:
             # ============================
             self.stage = rm.open_resource('GPIB0::8::INSTR')
             # ============================
+            self.connected = True
             self.waitReady()
             self.setSpeed()
             self.waitReady()
-            self.connected = True
         except ValueError as e:
             print(f"無効なパラメータが指定されました: {e}")
         except OSError as e:

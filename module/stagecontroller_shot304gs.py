@@ -30,10 +30,10 @@ class StageController:
             # ============================
             self.stage = rm.open_resource('GPIB0::8::INSTR')
             # ============================
+            self.connected = True
             self.waitReady()
             self.setSpeed()
             self.waitReady()
-            self.connected = True
         except ValueError as e:
             print(f"無効なパラメータが指定されました: {e}")
         except OSError as e:

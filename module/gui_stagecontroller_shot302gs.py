@@ -1,5 +1,5 @@
 import streamlit as st
-from stagecontroller_shot302 import StageController
+from stagecontroller_shot302gs import StageController
 
 # Initialize the stage controller
 stage_controller = StageController()

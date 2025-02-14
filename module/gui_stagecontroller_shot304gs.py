@@ -49,19 +49,11 @@ if st.button("Move"):
         st.error(f"Invalid input: {e}")
     except Exception as e:
         st.error(f"An error occurred: {e}")
-
-# Force move to zero position button
-if st.button("Force Move to Zero Position"):
+        
+# 機械原点復帰命令ボタン
+if st.button("機械原点復帰"):
     try:
-        stage_controller.forceMoveZeroPosition()
-        st.success("Moved to zero position")
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
-
-# Move to base position button
-if st.button("Move to Base Position"):
-    try:
-        stage_controller.moveBasePosition()
-        st.success("Moved to base position")
+        stage_controller.moveToHomePosition(axis)
+        st.success("機械原点に移動しました")
     except Exception as e:
         st.error(f"An error occurred: {e}")

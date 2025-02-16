@@ -18,19 +18,6 @@ max_speed = st.number_input("Maximum Speed", value=5000)
 # Acceleration input
 acceleration = st.number_input("Acceleration", value=100)
 
-# Set Speed button
-if st.button("Set Speed"):
-    try:
-        stage_controller.setSpeed(
-            ax1_min_speed=min_speed, ax1_max_speed=max_speed, ax1_acceleration=acceleration,
-            ax2_min_speed=min_speed, ax2_max_speed=max_speed, ax2_acceleration=acceleration,
-        )
-        st.success(f"Speed settings updated for axis {axis}")
-    except ValueError as e:
-        st.error(f"Invalid input: {e}")
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
-
 # Position input
 position = st.number_input("Position (um):", min_value=0.0, step=0.1)
 
@@ -43,6 +30,10 @@ wait_time = st.number_input("Wait Time (s):", min_value=0.0, step=0.1)
 # Move button
 if st.button("Move"):
     try:
+        stage_controller.setSpeed(
+            ax1_min_speed=min_speed, ax1_max_speed=max_speed, ax1_acceleration=acceleration,
+            ax2_min_speed=min_speed, ax2_max_speed=max_speed, ax2_acceleration=acceleration,
+        )
         stage_controller.moveAbs(axis, position, direction, wait_time)
         st.success(f"Moved axis {axis} to position {position} um in direction {direction}")
     except ValueError as e:

@@ -1,8 +1,9 @@
 import streamlit as st
 from stagecontroller_shot302gs import StageController
 
-# Initialize the stage controller
-stage_controller = StageController()
+# Initialize the stage controller if not already in session state
+if 'stage_controller' not in st.session_state:
+    st.session_state.stage_controller = StageController()
 
 st.title("Stage Controller GUI")
 
@@ -37,12 +38,12 @@ wait_time = st.number_input("Wait Time (s):", min_value=0.0, step=0.1)
 # Move button
 if st.button("Move"):
     try:
-        stage_controller.setSpeed(
+        st.session_state.stage_controller.setSpeed(
             ax1_min_speed=min_speed, ax1_max_speed=max_speed, ax1_acceleration=acceleration,
             ax2_min_speed=min_speed, ax2_max_speed=max_speed, ax2_acceleration=acceleration,
         )
-        stage_controller.setResolution(axis1_resolution=resolution, axis2_resolution=resolution)
-        stage_controller.moveAbs(axis, position, direction, wait_time)
+        st.session_state.stage_controller.setResolution(axis1_resolution=resolution, axis2_resolution=resolution)
+        st.session_state.stage_controller.moveAbs(axis, position, direction, wait_time)
         st.success(f"Moved axis {axis} to position {position} um in direction {direction}")
     except ValueError as e:
         st.error(f"Invalid input: {e}")
@@ -52,7 +53,7 @@ if st.button("Move"):
 # Home button
 if st.button("Home"):
     try:
-        stage_controller.moveToHomePosition(axis)
+        st.session_state.stage_controller.moveToHomePosition(axis)
         st.success("Homed the stage successfully")
     except Exception as e:
         st.error(f"An error occurred while homing: {e}")
